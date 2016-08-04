@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Retention</title>
+<style media="screen" type="text/css">
+input {
+ height:20px;
+ width:220px;
+ padding:5px 8px;
+ }
+input:focus {
+ border:1px solid cyan;
+ }
+</style>
+</head>
+
+<body>
+<script type="text/javascript">
+   setTimeout(function(){
+   var rnd = Math.floor((Math.random() * document.getElementById("words").options.length));
+   document.getElementById("w1").value = document.getElementById("words").options[rnd].value
+     },1000);
+</script>
+<?php
+$m = new MongoClient(); // connect
+$db = $m->selectDB("retention");
+$col = $db->createCollection("cory");
+
+if(!empty($_POST["w1"] && !empty($_POST["w2"]))){
+  $col->insert(array("w1"=>$_POST["w1"],"w2"=>$_POST["w2"],"date"=>new MongoDate()));
+  //  echo "Relation Added";
+}
+?>
+<form action="" method="POST" enctype="multipart/form-data">
+<datalist id="words">
+<?php
+$lines = file('../google-dic.txt');
+foreach ($lines as $line_num => $line) {
+  $line=trim($line);
+  echo "<option value='$line'>";
+}
+?>
+</datalist>
+<input id="w1" name="w1" list="words" size="15" type="text">
+<input name="w2" list="words" size="15" type="text" autofocus>
+<input type="submit" style="position: absolute; left: -9999px"/>
+</form>
+</body>
+
+</html>
